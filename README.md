@@ -1,6 +1,6 @@
-# Postgres-StORM
+# CouchDB-StORM
 
-Postgres-StORM is the PostgreSQL module for StORM - a Swift ORM.
+CouchDB-StORM is the CouchDB module for StORM - a Swift ORM.
 
 It aims to be easy to use, but flexible. Drawing on previous experiences, whether they be good, bad or ugly, of other ORM's, I have tried to build a system that allows you write great code without worrying about the details of how to interact with the database.
 
@@ -12,19 +12,6 @@ StORM is built on top of [Perfect](https://github.com/PerfectlySoft/Perfect) - t
 
 * Abstracts the database layer from your code.
 * Provides a way of adding save, delete, find to your Swift classes
-* Gives you access to more powerful select, insert, update, delete, and raw SQL querying.
+* Gives you access to more powerful find, create, update and delete.
 * Maps result sets to your classes
 
-
-### What does it not do?
-
-Right now there are a few things missing, but the basics are there. 
-
-On the "TODO" list are:
-
-* complete joins
-* complete having
-* complete group by
-* upsert
-* documentation
-* complete test coverage

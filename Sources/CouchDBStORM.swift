@@ -148,18 +148,18 @@ open class CouchDBStORM: StORM, StORMProtocol {
 		if !rev.isEmpty { _rev = rev }
 		do {
 			if keyIsEmpty() {
-				let (code, response) = try db.addDoc(doc: try asDataDict(1).jsonEncodedString())
+				let (code, _) = try db.addDoc(doc: try asDataDict(1).jsonEncodedString())
 				if .created != code {
 					LogFile.critical("CouchDB Doc Save(set) code error \(code)")
 					throw StORMError.error("CouchDB Doc Save(set) code error \(code)")
 				}
-				LogFile.info("CouchDB Doc Save() code \(code)")
-				LogFile.info("CouchDB Doc Save() response \(response)")
+//				LogFile.info("CouchDB Doc Save() code \(code)")
+//				LogFile.info("CouchDB Doc Save() response \(response)")
 			} else {
 				let (_, idval) = firstAsKey()
-				let (code, response) = try db.update(docid: idval as! String, doc: asDataDict(1), rev: _rev)
-				LogFile.info("CouchDB Doc Update Save() code \(code)")
-				LogFile.info("CouchDB Doc Update Save() response \(response)")
+				let (_, _) = try db.update(docid: idval as! String, doc: asDataDict(1), rev: _rev)
+//				LogFile.info("CouchDB Doc Update Save() code \(code)")
+//				LogFile.info("CouchDB Doc Update Save() response \(response)")
 			}
 		} catch {
 			throw StORMError.error("\(error)")
@@ -200,7 +200,7 @@ open class CouchDBStORM: StORM, StORMProtocol {
 		let db = setupObject()
 		do {
 			let (_, idval) = firstAsKey()
-			LogFile.info("id: \(idval)")
+//			LogFile.info("id: \(idval)")
 			let (code, response) = try db.create(docid: idval as! String, doc: asDataDict(1))
 			if .created != code {
 				LogFile.critical("CouchDB Doc Create code error \(code)")
@@ -220,7 +220,7 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	open func setup() throws {
 		let db = setupObject(false)
 
-		LogFile.info("\(CouchDBConnection.host), \(CouchDBConnection.port)")
+//		LogFile.info("\(CouchDBConnection.host), \(CouchDBConnection.port)")
 
 		// db now inherits directly the auth and connection protocols
 		let code = db.databaseCreate(database())

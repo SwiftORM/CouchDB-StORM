@@ -29,16 +29,20 @@ public struct CouchDBConnection {
 
 }
 
-
+/// A "superclass" that is meant to be inherited from by oject classes.
+/// Provides ORM structre.
 open class CouchDBStORM: StORM, StORMProtocol {
 
+	/// Document revision in CouchDB
 	public var _rev = ""
 
-
+	/// Database object that the child object relates to on the CouchDB server.
+	/// Defined as "open" as it is meant to be overridden by the child class.
 	open func database() -> String {
 		return "unset"
 	}
 
+	/// Base initializer method.
 	override public init() {
 		super.init()
 	}
@@ -47,6 +51,8 @@ open class CouchDBStORM: StORM, StORMProtocol {
 		if StORMdebug { print("StORM Debug: \(statement) : \(params.joined(separator: ", "))") }
 	}
 
+	/// Populates a CouchDB object with the required authentication and connector information.
+	/// Returns the new CouchDB Object.
 	public func setupObject(_ setDatabase: Bool = true) -> CouchDB {
 		let obj = CouchDB()
 		obj.authentication = CouchDBAuthentication(CouchDBConnection.username, CouchDBConnection.password, auth: .basic)
@@ -56,83 +62,20 @@ open class CouchDBStORM: StORM, StORMProtocol {
 		if setDatabase == true { obj.database = database() }
 		return obj
 	}
-//	// Internal function which executes statements, with parameter binding
-//	// Returns raw result
-//	@discardableResult
-//	func exec(_ statement: String, params: [String]) throws -> PGResult {
-//		let thisConnection = PostgresConnect(
-//			host:		PostgresConnector.host,
-//			username:	PostgresConnector.username,
-//			password:	PostgresConnector.password,
-//			database:	PostgresConnector.database,
-//			port:		PostgresConnector.port
-//		)
-//
-//		thisConnection.open()
-//		thisConnection.statement = statement
-//
-//		printDebug(statement, params)
-//		let result = thisConnection.server.exec(statement: statement, params: params)
-//
-//		// set exec message
-//		errorMsg = thisConnection.server.errorMessage().trimmingCharacters(in: .whitespacesAndNewlines)
-//		if StORMdebug { LogFile.info("Error msg: \(errorMsg)", logFile: "./StORMlog.txt") }
-//		if isError() {
-//			thisConnection.server.close()
-//			throw StORMError.error(errorMsg)
-//		}
-//		thisConnection.server.close()
-//		return result
-//	}
-//
-//	// Internal function which executes statements, with parameter binding
-//	// Returns a processed row set
-//	@discardableResult
-//	func execRows(_ statement: String, params: [String]) throws -> [StORMRow] {
-//		let thisConnection = PostgresConnect(
-//			host:		PostgresConnector.host,
-//			username:	PostgresConnector.username,
-//			password:	PostgresConnector.password,
-//			database:	PostgresConnector.database,
-//			port:		PostgresConnector.port
-//		)
-//
-//		thisConnection.open()
-//		thisConnection.statement = statement
-//
-//		printDebug(statement, params)
-//		let result = thisConnection.server.exec(statement: statement, params: params)
-//
-//		// set exec message
-//		errorMsg = thisConnection.server.errorMessage().trimmingCharacters(in: .whitespacesAndNewlines)
-//		if StORMdebug { LogFile.info("Error msg: \(errorMsg)", logFile: "./StORMlog.txt") }
-//		if isError() {
-//			thisConnection.server.close()
-//			throw StORMError.error(errorMsg)
-//		}
-//
-//		let resultRows = parseRows(result)
-//		//		result.clear()
-//		thisConnection.server.close()
-//		return resultRows
-//	}
 
-
-//	func isError() -> Bool {
-//		if errorMsg.contains(string: "ERROR") {
-//			print(errorMsg)
-//			return true
-//		}
-//		return false
-//	}
-
+	/// Generic "to" function
+	/// Defined as "open" as it is meant to be overridden by the child class.
+	///
+	/// Sample usage:
+	///		id				= this.data["id"] as? Int ?? 0
+	///		firstname		= this.data["firstname"] as? String ?? ""
+	///		lastname		= this.data["lastname"] as? String ?? ""
+	///		email			= this.data["email"] as? String ?? ""
 	open func to(_ this: StORMRow) {
-		//		id				= this.data["id"] as! Int
-		//		firstname		= this.data["firstname"] as! String
-		//		lastname		= this.data["lastname"] as! String
-		//		email			= this.data["email"] as! String
 	}
 
+	/// Generic "makeRow" function
+	/// Defined as "open" as it is meant to be overridden by the child class.
 	open func makeRow() {
 		guard self.results.rows.count > 0 else {
 			return
@@ -142,6 +85,11 @@ open class CouchDBStORM: StORM, StORMProtocol {
 
 
 
+	/// Standard "Save" function.
+	/// Designed as "open" so it can be overriden and customized.
+	/// Takes an optional "rev" parameter which is the document revision to be used. If empty the object's stored _rev property is used.
+	/// If an ID has been defined, save() will perform an updae, otherwise a new document is created.
+	/// On error can throw a StORMError error.
 	@discardableResult
 	open func save(rev: String = "") throws {
 		let db = setupObject()
@@ -153,18 +101,22 @@ open class CouchDBStORM: StORM, StORMProtocol {
 					LogFile.critical("CouchDB Doc Save(set) code error \(code)")
 					throw StORMError.error("CouchDB Doc Save(set) code error \(code)")
 				}
-//				LogFile.info("CouchDB Doc Save() code \(code)")
-//				LogFile.info("CouchDB Doc Save() response \(response)")
 			} else {
 				let (_, idval) = firstAsKey()
 				let (_, _) = try db.update(docid: idval as! String, doc: asDataDict(1), rev: _rev)
-//				LogFile.info("CouchDB Doc Update Save() code \(code)")
-//				LogFile.info("CouchDB Doc Update Save() response \(response)")
 			}
 		} catch {
 			throw StORMError.error("\(error)")
 		}
 	}
+
+
+	/// Alternate "Save" function.
+	/// In addition to setting the revision, will use the supplied "set" to assign or otherwise process the returned id.
+	/// Designed as "open" so it can be overriden and customized.
+	/// Takes an optional "rev" parameter which is the document revision to be used. If empty the object's stored _rev property is used.
+	/// If an ID has been defined, save() will perform an updae, otherwise a new document is created.
+	/// On error can throw a StORMError error.
 	@discardableResult
 	open func save(rev: String = "", set: (_ id: String)->Void) throws {
 		let db = setupObject()
@@ -195,12 +147,13 @@ open class CouchDBStORM: StORM, StORMProtocol {
 		}
 	}
 
+	/// Unlike the save() methods, create() mandates the addition of a new document, regardless of whether an ID has been set or specified.
+	/// The object's revision property is also set once the save has been completed.
 	@discardableResult
 	override open func create() throws {
 		let db = setupObject()
 		do {
 			let (_, idval) = firstAsKey()
-//			LogFile.info("id: \(idval)")
 			let (code, response) = try db.create(docid: idval as! String, doc: asDataDict(1))
 			if .created != code {
 				LogFile.critical("CouchDB Doc Create code error \(code)")
@@ -219,9 +172,6 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	@discardableResult
 	open func setup() throws {
 		let db = setupObject(false)
-
-//		LogFile.info("\(CouchDBConnection.host), \(CouchDBConnection.port)")
-
 		// db now inherits directly the auth and connection protocols
 		let code = db.databaseCreate(database())
 		if .created == code {

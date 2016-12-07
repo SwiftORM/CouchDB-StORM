@@ -11,14 +11,11 @@ import PerfectCouchDB
 import PerfectLib
 import Foundation
 
+/// Supplies the parseRows method extending the main CouchDBStORM class.
 extension CouchDBStORM {
+
+	/// parseRows takes the [String:Any] result and returns an array of StormRows 
 	public func parseRows(_ result: [String:Any]) throws -> [StORMRow] {
-//		var result = [String:Any]()
-//		do {
-//			result = try r.jsonDecode() as! [String : Any]
-//		} catch {
-//			throw error
-//		}
 
 		var resultRows = [StORMRow]()
 

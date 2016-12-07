@@ -9,10 +9,12 @@
 import StORM
 import PerfectCouchDB
 
+/// Convenience methods extending the main CouchDBStORM class.
 extension CouchDBStORM {
 
 	/// Deletes one row, with an id
 	/// Presumes first property in class is the id.
+	/// The _rev (revision) property must be set as a safety mechanism.
 	public func delete() throws {
 		let db = setupObject()
 		let (_, idval) = firstAsKey()
@@ -36,7 +38,7 @@ extension CouchDBStORM {
 		}
 	}
 
-
+	/// Retrieves a document with a specified ID.
 	public func get(_ id: String) throws {
 		let db = setupObject()
 		do {
@@ -57,6 +59,7 @@ extension CouchDBStORM {
 		}
 	}
 
+	/// Retrieves a document with the ID as set in the object.
 	public func get() throws {
 		let (_, idval) = firstAsKey()
 		do {
@@ -66,7 +69,11 @@ extension CouchDBStORM {
 		}
 	}
 
-	// The major diff to the CouchDB method is it pours the data INTO the object
+	/// Performs a find using the selector syntax
+	/// An optional cursor:StORMCursor object can be supplied to determin pagination through a larger result set.
+	/// For example, `try find(["username":"joe"])` will find all documents that have a username equal to "joe"
+	/// Full selector syntax can be found at http://docs.couchdb.org/en/2.0.0/api/database/find.html#find-selectors
+	/// Remember that the selector object is [String:Any], not the raw JSON.
 	public func find(_ data: [String: Any], cursor: StORMCursor = StORMCursor()) throws {
 		let db = setupObject()
 		let findObject = CouchDBQuery()

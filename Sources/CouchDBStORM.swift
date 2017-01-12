@@ -88,7 +88,7 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	/// Standard "Save" function.
 	/// Designed as "open" so it can be overriden and customized.
 	/// Takes an optional "rev" parameter which is the document revision to be used. If empty the object's stored _rev property is used.
-	/// If an ID has been defined, save() will perform an updae, otherwise a new document is created.
+	/// If an ID has been defined, save() will perform an update, otherwise a new document is created.
 	/// On error can throw a StORMError error.
 	@discardableResult
 	open func save(rev: String = "") throws {

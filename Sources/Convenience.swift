@@ -1,6 +1,6 @@
 //
 //  Convenience.swift
-//  PostgresStORM
+//  CouchDBStORM
 //
 //  Created by Jonathan Guthrie on 2016-10-04.
 //

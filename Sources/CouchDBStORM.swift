@@ -1,6 +1,6 @@
 //
-//  PostgreStORM.swift
-//  PostgresSTORM
+//  CouchDBStORM.swift
+//  CouchDBStORM
 //
 //  Created by Jonathan Guthrie on 2016-10-03.
 //
@@ -39,7 +39,8 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	/// Database object that the child object relates to on the CouchDB server.
 	/// Defined as "open" as it is meant to be overridden by the child class.
 	open func database() -> String {
-		return "unset"
+		let m = Mirror(reflecting: self)
+		return ("\(m.subjectType)").lowercased()
 	}
 
 	/// Base initializer method.

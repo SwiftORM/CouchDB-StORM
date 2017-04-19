@@ -91,7 +91,6 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	/// Takes an optional "rev" parameter which is the document revision to be used. If empty the object's stored _rev property is used.
 	/// If an ID has been defined, save() will perform an update, otherwise a new document is created.
 	/// On error can throw a StORMError error.
-	@discardableResult
 	open func save(rev: String = "") throws {
 		let db = setupObject()
 		if !rev.isEmpty { _rev = rev }
@@ -118,7 +117,6 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	/// Takes an optional "rev" parameter which is the document revision to be used. If empty the object's stored _rev property is used.
 	/// If an ID has been defined, save() will perform an updae, otherwise a new document is created.
 	/// On error can throw a StORMError error.
-	@discardableResult
 	open func save(rev: String = "", set: (_ id: String)->Void) throws {
 		let db = setupObject()
 		if !rev.isEmpty { _rev = rev }
@@ -150,7 +148,6 @@ open class CouchDBStORM: StORM, StORMProtocol {
 
 	/// Unlike the save() methods, create() mandates the addition of a new document, regardless of whether an ID has been set or specified.
 	/// The object's revision property is also set once the save has been completed.
-	@discardableResult
 	override open func create() throws {
 		let db = setupObject()
 		do {
@@ -170,7 +167,6 @@ open class CouchDBStORM: StORM, StORMProtocol {
 
 	/// Database Create
 	/// Requires CouchDBConnection to be configured, as well as a valid "database" property to have been set in the class
-	@discardableResult
 	open func setup() throws {
 		let db = setupObject(false)
 		// db now inherits directly the auth and connection protocols

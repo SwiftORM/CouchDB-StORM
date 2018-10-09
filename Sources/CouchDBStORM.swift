@@ -49,7 +49,7 @@ open class CouchDBStORM: StORM, StORMProtocol {
 	}
 
 	private func printDebug(_ statement: String, _ params: [String]) {
-		if StORMdebug { print("StORM Debug: \(statement) : \(params.joined(separator: ", "))") }
+		if StORMDebug.active { print("StORM Debug: \(statement) : \(params.joined(separator: ", "))") }
 	}
 
 	/// Populates a CouchDB object with the required authentication and connector information.
